@@ -1,5 +1,5 @@
 ---
-title: "JSC370 Homework 5"
+title: "Life Expectancy - JSC370 Final project"
 author: "Jianhong Guo"
 date: "05/04/2022"
 output: 

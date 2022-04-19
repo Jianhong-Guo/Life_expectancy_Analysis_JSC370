@@ -578,10 +578,10 @@ plot_ly(x=colnames(life_exp), y=rownames(life_exp), z=~life_exp, type = 'heatmap
 ```{r, echo=FALSE}
 ggplot(data=life) +
   geom_histogram(aes(life_expectancy, fill= Status),  bins =30)+
-  scale_fill_manual(values = c("orange", "green")) + ggtitle("Histogram of life_expectancy by Status category")
+  scale_fill_manual(values = c("orange", "green")) + ggtitle("Histogram of life_expectancy by Status category in 2015")
 ```
 
-   The overall distribution of life expectancy is normal distribution with right skewed, and the mean of the life_expectancy is around 70, and the mode is 75. Most countries are developing countries, and the distribution of life_expectancy for developing countries is right skewed too, the mode is around 75. The distribution of life expectancy for developed countries is around normal, and mode of is around 82. The distribution of life expectancy for developed countries is on the right of the distribution of developing countries.
+   The overall distribution of life expectancy is normal distribution with right skewed, and the mean of the life_expectancy is around 73, and the mode is 75. Most countries are developing countries, and the distribution of life_expectancy for developing countries is right skewed, the mode is around 75. The distribution of life expectancy for developed countries is around normal, and mode of is around 82. The distribution of life expectancy for developed countries is on the right of the distribution of developing countries.
 
 
 
@@ -613,12 +613,12 @@ ggplot(life, aes(x =factor(obesity_level), y= prop.table(stat(count)), fill=fact
               vjust = -0.5, 
               size = 3) +
      scale_fill_manual(values = c("orange", "green", "red", "blue"))+
-  ggtitle("Barchart of BMI by Status")
+  ggtitle("Barchart of BMI by Status in 2015")
 ```
 
   More than half of the countries are developing countries with obese obesity_level.
   The proportion of developed countries in each obesity_level categories is as follows:
-2.1$\%$ normal obesity_level countries are developed countries, 24.97$\%$ overweight obesity_level countries are developed countries, 7.7$\%$ underweight obesity_level countries are developed countries, and 7.76$\%$ obese obesity_level countries are developed countries.
+0$\%$ normal obesity_level countries are developed countries, 6$\%$ overweight obesity_level countries are developed countries, 0$\%$ underweight obesity_level countries are developed countries, and 30.78$\%$ obese obesity_level countries are developed countries.
 
 
 ### Correlation plot

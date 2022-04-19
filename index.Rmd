@@ -106,7 +106,7 @@ full_life <- life%>%select(c(1,2,3,4, 5, 7,11, 16,17, 21, 22, 23))
 life <- life%>%filter(Year=="2015")
 ```
 
-## scartterplots
+### scartterplots
 
 ```{r, echo=FALSE}
 filter1 <- full_data%>% filter(GDP>10)
@@ -152,17 +152,8 @@ ggarrange(p, p1, p2,p3,p4,p5,
 
 
 
- From the above graph, the life expectancy increases as GDP increases, but the life_expectancy stays still when GDP reaches a certain level.
-
-  As alcohol increases, the life expectancy increases, but the range of life expectancy for alcohol level are large. Also, most developed countries have high alcohol level.
-
-  It is obvious that the life_expectancy increases as schooling year increase, and developed countries has higher schooling years.
-
-  As BMI increases, the life expectancy increases, but the range of life expectancy for BMI are large. Also, most developed countries have high BMI level.
-
-  Overall, as vaccine increases, the life expectancy increases, but the life expectancy varies a lot for the same vaccine level.
-  
-  There is a strong linear relationship between adult_mortality and life expectancy. As the adult mortality increases, the life expectancy decreases.
+ From the above graph, the life expectancy increases as GDP increases, but the life_expectancy stays still when GDP reaches a certain level. In addition, As alcohol/BMI/vaccine increases, the life expectancy increases, but the range of life expectancy for alcohol/BMI/vaccine level are large. 
+  It is obvious that the life_expectancy increases as schooling year increase, and developed countries has higher schooling years, alcohol level and BMI level. Moreover, there is a strong linear relationship between adult_mortality and life expectancy. As the adult mortality increases, the life expectancy decreases.
 
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
@@ -229,6 +220,7 @@ Also, the correlation between Schooling and income composition is 0.92, which is
 
 ```{r, echo=FALSE, warning=FALSE}
 full_life1 <- full_life%>%mutate(Country=as.integer(as.factor(Country)))
+full_life1<-na.omit(full_life1)
 train_idx <- sample(1:nrow(full_life1), round(0.7*nrow(full_life1)))
 train <- full_life1[train_idx, ]
 test <- full_life1[-train_idx, ]
@@ -241,11 +233,13 @@ test <- full_life1[-train_idx, ]
 set.seed(10)
 life_rf <- randomForest(life_expectancy~., data=train, importance=T)
 varImpPlot(life_rf, n.var=11,col='blue')
-yhat.rf <- predict(life_rf, test_x)
-mse <- mean((yhat.rf-test_y$life_expectancy)^2)
+yhat.rf <- predict(life_rf, test)
+mse <- mean((yhat.rf-test$life_expectancy)^2)
 ```
 In summary, the variables that greatly affect life expectancy including income composition, Schooling, adult_mortality, BMI, Hiv_aids and vaccine.
 The MSE for regression tree model with cp=0.002 is 9.972, and the MSE for bagging model is 3.6989. In addition, the MSE for random forest is 3.39. Since Random Forest has the lowest MSE, I choose it to be the desired model to predict life expectancy.
 
 
-# 3. Link to PDF
+# 3. Link to PDF 
+
+[report.pdf](https://github.com/Jianhong-Guo/Life_expectancy_Analysis_JSC370/blob/main/report.pdf)

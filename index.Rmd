@@ -204,11 +204,11 @@ plot_ly(x=colnames(life_exp), y=rownames(life_exp), z=~life_exp, type = 'heatmap
 ### Correlation plot
 
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, fig.align='center'}
 
 my_data <- life[, c(4,5,7,11,16, 17, 21, 22,23)]
 
-corPlot(my_data, cex = 0.6)
+corPlot(my_data, cex = 1)
 
 ```
 
@@ -229,7 +229,7 @@ test <- full_life1[-train_idx, ]
 
 ### ML models
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, fig.align='center'}
 set.seed(10)
 life_rf <- randomForest(life_expectancy~., data=train, importance=T)
 varImpPlot(life_rf, n.var=11,col='blue')

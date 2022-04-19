@@ -13,8 +13,12 @@ each row is the life expectancy related information for a country in a specific 
 including the immunization, mortality, economy and society related information. Specifically, Life expectancy data
 includes variables “Country”, “Year”, “Status”, “Life expectancy”, “GDP”, “Adult Mortality”, “BMI”, “Schooling”,
 “Hepatitis B”, “Alcohol” and so on. There are total 2938 rows.
+
+
 The question that I am going to answer based on this dataset is as follows: For the given life expectancy related
 variables, which variables greatly affect the life expectancy? How those factors affect the life expectancy?
+
+
 By knowing the above question, we may change situation of the specific variables to improve the life expectancy
 of a person/country, and we can use the variables to generate an effective model to predict the life expectancy by
 given information.

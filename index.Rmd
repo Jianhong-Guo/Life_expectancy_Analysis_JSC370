@@ -12,13 +12,240 @@ output:
 knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE, eval=TRUE)
 ```
 
-# Intruduction
+# 1. Intruduction
 
-The dataset for this project is life expectancy data. It contains the health factors and economic data for 193 countries from year 2000 to 2015. What's more, the health factor data is collected from World Health Organization (WHO) while the economic data is from the United Nation website. Life expectancy data contains 2938 rows, and each row is about the life expectancy related information for a country in a specific year. The data set has 22 columns, including the immunization, mortality, economy and society related information. Specifically, Life expectancy data includes variables "Country", "Year", "Status", "Life expectancy", "GDP", "Adult Mortality", "BMI", "Schooling", "Hepatitis B", "Alcohol" and so on. 
+The dataset for this project is [life expeactancy data set](https://www.kaggle.com/kumarajarshi/life-expectancy-who). It contains the health factors and economic data for 193 countries from year 2000 to 2015. What's more, the health factor data is collected from World Health Organization (WHO) while the economic data is from the United Nation website. Life expectancy data contains 2938 rows, and each row is about the life expectancy related information for a country in a specific year. The data set has 22 columns, including the immunization, mortality, economy and society related information. Specifically, Life expectancy data includes variables "Country", "Year", "Status", "Life expectancy", "GDP", "Adult Mortality", "BMI", "Schooling", "Hepatitis B", "Alcohol" and so on. There are total 2938 rows.
 
-The question that we are going to answer based on this dataset is as following:
+The question that I am going to answer based on this dataset is as following:
 For the given life expectancy related variables, which variables greatly affect the life expectancy? How those factors affect the life expectancy?
 
 By knowing the above question, we may change situation of the specific variables to improve the life expectancy of a person/ country, and we can use the variables to generate an effective model to predict the life expectancy by given information.
 
-This data set is download from Kaggle(https://www.kaggle.com/kumarajarshi/life-expectancy-who). 
+
+# 2.Visualizations
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+library(data.table)
+library(dplyr)
+library(tidyverse)
+library(ggpubr)
+library(ggforce)
+library(plotly)
+library(rpart)
+library(rpart.plot)
+library(randomForest)
+library(psych)
+library(mgcv)
+
+```
+
+
+
+```{r, echo=FALSE}
+life <-fread("./data/Life Expectancy Data.csv")
+```
+
+
+
+```{r, echo=FALSE}
+life <- rename(life, life_expectancy = `Life expectancy`,adult_mortalit = `Adult Mortality`, infant_deaths = `infant deaths`,
+             percentage_expenditure = `percentage expenditure`,Hepatitis_B= `Hepatitis B`, under_five_deaths = `under-five deaths`,
+             total_expenditure=`Total expenditure`,  Hiv_aids =`HIV/AIDS`, thinness_1_19=`thinness  1-19 years`,thinness_5_9=`thinness 5-9 years`,income_composition=`Income composition of resources`
+             )
+life[, Country:= ifelse(Country=="United Kingdom of Great Britain and Northern Ireland", "United Kingdom", ifelse(Country=="Democratic People's Republic of Korea","Korea", ifelse(Country=="The former Yugoslav republic of Macedonia", "Macedonia",Country )))]
+
+```
+
+
+
+```{r, echo=FALSE}
+
+df <- data.frame(table(life$Country))%>%arrange(Freq) %>%head(10)
+df <- rename(df, Country=Var1, n_row = Freq)
+#knitr::kable(df, caption = "Counrties with missing year data from 2000 to 2015")
+
+```
+
+
+
+```{r, echo=FALSE}
+
+life[,Schooling:=ifelse(Schooling==0, NA, Schooling)]
+life[,Schooling:=ifelse(is.na(Schooling), mean(Schooling, na.rm=TRUE), Schooling), by =Country]
+
+life[,BMI:=ifelse(BMI<10, NA, BMI)]
+life[,BMI:=ifelse(is.na(BMI), mean(BMI, na.rm=TRUE), BMI), by =Country]
+
+
+```
+
+
+
+```{r, echo=FALSE}
+
+life <- life %>% 
+  mutate(vaccine = (Hepatitis_B + Polio+Diphtheria)/3)
+
+```
+
+
+
+```{r, echo=FALSE}
+  
+life <- life %>% 
+  mutate(obesity_level =ifelse(BMI <18.5, "underweight", ifelse(BMI <=24.9, "normal", ifelse(BMI<=29.9, "overweight", "obese"))))
+
+```
+
+
+
+```{r, echo=FALSE}
+
+full_data<- life
+full_life <- life%>%select(c(1,2,3,4, 5, 7,11, 16,17, 21, 22, 23))
+life <- life%>%filter(Year=="2015")
+```
+
+## scartterplots
+
+```{r, echo=FALSE}
+filter1 <- full_data%>% filter(GDP>10)
+p <- ggplot(data=filter1)+
+  geom_point(aes(x=GDP, y=life_expectancy, color=Status)) +
+  geom_smooth(aes(x=GDP, y=life_expectancy), method="gam", formula = y~x)+
+  ggtitle("GDP vs. life expectancy")
+
+filter1 <- full_data%>% filter(Alcohol>0)
+p1 <- ggplot(data=filter1)+
+  geom_point(aes(x=Alcohol, y=life_expectancy,  color=Status))+
+  geom_smooth(aes(x=Alcohol, y=life_expectancy), method="lm", formula = y~x)+
+  ggtitle("Alcohol vs. life expectancy")
+
+filter1 <- full_data%>% filter(Schooling>0)
+p2 <- ggplot(data=filter1)+
+  geom_point(aes(x=Schooling, y=life_expectancy, color=Status))+
+  geom_smooth(aes(x=Schooling, y=life_expectancy), method="lm", formula = y~x)+ 
+  ggtitle("Schooling vs. life expectancy")
+
+filter1 <- full_data%>% filter(BMI>10)
+p3 <- ggplot(data=filter1)+
+  geom_point(aes(x=BMI, y=life_expectancy,  color=Status))+
+  geom_smooth(aes(x=BMI, y=life_expectancy), method="lm", formula = y~x)+
+  ggtitle("BMI vs. life expectancy")
+
+filter1 <- full_data%>% filter(vaccine>0)
+p4 <- ggplot(data=filter1)+
+  geom_point(aes(x=vaccine, y=life_expectancy,  color=Status))+
+  geom_smooth(aes(x=vaccine, y=life_expectancy), method="lm", formula = y~x)+
+  ggtitle("vaccine vs. life expectancy")
+
+filter1 <- full_data%>% filter(adult_mortalit>60)
+p5 <- ggplot(data=filter1)+
+  geom_point(aes(x=adult_mortalit, y=life_expectancy,  color=Status))+
+  geom_smooth(aes(x=adult_mortalit, y=life_expectancy), method="lm", formula = y~x)+
+  ggtitle("adult mortality vs. life expectancy")
+
+ggarrange(p, p1, p2,p3,p4,p5,
+                    ncol = 2, nrow = 3)
+
+```
+
+
+
+ From the above graph, the life expectancy increases as GDP increases, but the life_expectancy stays still when GDP reaches a certain level.
+
+  As alcohol increases, the life expectancy increases, but the range of life expectancy for alcohol level are large. Also, most developed countries have high alcohol level.
+
+  It is obvious that the life_expectancy increases as schooling year increase, and developed countries has higher schooling years.
+
+  As BMI increases, the life expectancy increases, but the range of life expectancy for BMI are large. Also, most developed countries have high BMI level.
+
+  Overall, as vaccine increases, the life expectancy increases, but the life expectancy varies a lot for the same vaccine level.
+  
+  There is a strong linear relationship between adult_mortality and life expectancy. As the adult mortality increases, the life expectancy decreases.
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+life%>% 
+  plot_ly(x=~income_composition, y=~life_expectancy, type="scatter",  mode='markers', color=~Country, size=~Hiv_aids,
+          sizes=c(7,30), marker=list(sizemode='diameter', opacity=1),
+          hover_info="text", text=~paste(paste0("Country: ", Country),
+                                         paste0("Hiv_aids: ", Hiv_aids),
+                                         sep = "<br>"))%>%
+  layout(title="income composition vs. life expectancy in 2015", 
+         yaxis=list(title="life expectancy"),
+         xaxis=list(title="income composition"),
+         hovermode = "compare",
+         legend = list(font = list(size = 10))
+  )
+```
+
+From the above graph, as the income composition of resources increases, the life expectancy increases. The size of the point in the above graph shows the GDP of the data. 
+
+
+### Heatmap
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+missing <- data.frame(table(full_data$Country))%>%arrange(Freq) %>%head(10)
+life_mat1 <- full_data %>%select(Country, Year, life_expectancy)
+
+#life_mat1[, BMI:= ifelse(BMI<10, as.integer(mean(BMI,na.rm =TRUE)), BMI), by = .(Country)]
+life_mat2 <- as.data.frame(pivot_wider(life_mat1, names_from=Country, values_from = life_expectancy))
+life_mat2 <- life_mat2%>%select(-c(missing$Var1))
+
+life_exp <- life_mat2 %>%
+  column_to_rownames("Year")%>%
+  as.matrix()
+
+plot_ly(x=colnames(life_exp), y=rownames(life_exp), z=~life_exp, type = 'heatmap')%>%
+  layout(title="Heatmap of Life expectancy by year and country ", 
+         yaxis=list(title="year"),
+         xaxis=list(title="country"),
+         hovermode = "compare",
+         legend = list(font = list(size = 10)))
+
+```
+
+
+ As we can see from the above, many countries has life expectancy stay still or increases during 2000 to 2015. However, for some countries, the life expectancy may change a lot for a specific year. For example, the life expectancy of Halti in 2009 and 2011 is around 62, and the 2000 is 36.3, and the 2010 Haiti earthquake is the main reason causing the low life expectancy.
+  
+
+### Correlation plot
+
+
+```{r, echo=FALSE}
+
+my_data <- life[, c(4,5,7,11,16, 17, 21, 22,23)]
+
+corPlot(my_data, cex = 0.6)
+
+```
+
+
+As shown from the above graph, income composition, Schooling, adult_mortality, BMI, Hiv_aids, vaccine has the correlation value higher than 0.5 with life expectancy.
+Also, the correlation between Schooling and income composition is 0.92, which is very higher. The correlation between GDP and income_composition/Schooling is 0.74/0.68. Furthermore, The correlation between adult_mortality and BMI/Hiv_aids/income_composition, Alcohol and income_composition/Schooling are all around 0.5-0.65. 
+
+
+
+```{r, echo=FALSE, warning=FALSE}
+full_life1 <- full_life%>%mutate(Country=as.integer(as.factor(Country)))
+train_idx <- sample(1:nrow(full_life1), round(0.7*nrow(full_life1)))
+train <- full_life1[train_idx, ]
+test <- full_life1[-train_idx, ]
+```
+
+
+### ML models
+
+```{r, echo=FALSE}
+set.seed(10)
+life_rf <- randomForest(life_expectancy~., data=train, importance=T)
+varImpPlot(life_rf, n.var=11,col='blue')
+yhat.rf <- predict(life_rf, test_x)
+mse <- mean((yhat.rf-test_y$life_expectancy)^2)
+```
+In summary, the variables that greatly affect life expectancy including income composition, Schooling, adult_mortality, BMI, Hiv_aids and vaccine.
+The MSE for regression tree model with cp=0.002 is 9.972, and the MSE for bagging model is 3.6989. In addition, the MSE for random forest is 3.39. Since Random Forest has the lowest MSE, I choose it to be the desired model to predict life expectancy.
+
+
+# 3. Link to PDF

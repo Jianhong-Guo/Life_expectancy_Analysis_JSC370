@@ -3,18 +3,12 @@ output_dir: "docs"
 navbar:
   title: "Life Expectancy Analysis"
   left:
-    - text: "Introduction"
-      href: index.html
-    - text: "Methods"
-      href: page2.html
-    - text: "Preliminary results"
-      href: page4.html
-    - text: "Conclusion"
-      href: page5.html
-    - text: "Index from lab12 repo"
-      href: lab12.html
+    - text: "Report"
+      href: report.html
       
   right:
+    - text: "Data"
+      href: https://www.kaggle.com/datasets/kumarajarshi/life-expectancy-who
     - icon: fa-github fa-lg
       href: https://github.com/JSC370/jsc370-2022/
     - text: "JSC370 Home"

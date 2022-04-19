@@ -1,8 +1,10 @@
 # Life Expectancy Analysis website.
 
 The website is online at https://jianhong-guo.github.io/Life_expectancy_Analysis_JSC370/ 
-\\
-The data can be found in the data file this github repository or download from https://www.kaggle.com/kumarajarshi/life-expectancy-who \\
+
+
+The data can be found in the data file this github repository or download from https://www.kaggle.com/kumarajarshi/life-expectancy-who 
+
 
 The dataset for this project is life expectancy data. It contains the health factors and economic data for 193
 countries from year 2000 to 2015. What’s more, the health factor data is collected from World Health Organization

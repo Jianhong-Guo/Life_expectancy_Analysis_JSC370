@@ -196,7 +196,7 @@ plot_ly(x=colnames(life_exp), y=rownames(life_exp), z=~life_exp, type = 'heatmap
 ```
 
 
- As we can see from the above, many countries has life expectancy stay still or increases during 2000 to 2015. However, for some countries, the life expectancy may change a lot for a specific year. For example, the life expectancy of Halti in 2009 and 2011 is around 62, and the 2000 is 36.3, and the 2010 Haiti earthquake is the main reason causing the low life expectancy.
+ As we can see from the above, many countries has life expectancy stay still or increases during 2000 to 2015. However, for some countries, the life expectancy may change a lot for a specific year. For example, the life expectancy of Halti in 2009 and 2011 is around 62, and the 2010 is 36.3, and the 2010 Haiti earthquake is the main reason causing the low life expectancy.
   
 
 ### Correlation plot

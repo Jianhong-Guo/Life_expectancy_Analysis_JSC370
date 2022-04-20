@@ -169,7 +169,7 @@ life%>%
   )
 ```
 
-From the above graph, as the income composition of resources increases, the life expectancy increases. The size of the point in the above graph shows the GDP of the data. 
+From the above graph, as the income composition of resources increases, the life expectancy increases. The size of the point in the above graph shows the Hiv_aids of the data. 
 
 
 ### Heatmap
